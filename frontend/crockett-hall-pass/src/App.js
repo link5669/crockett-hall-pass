@@ -1,22 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import HallPass from './components/HallPass';
+import axios from "axios"
 
 function App() {
   const [user, setUser] = useState(null)
   const [selectedLocation, setSelectedLocation] = useState('');
   const [view, setView] = useState("register")
   const handleChange = (event) => {
+    console.log(selectedLocation)
     setSelectedLocation(event.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log("submit!")
+    axios.post(`http://localhost:5001/api/registerPass?studentName=${user}&destination=${selectedLocation}&timeOut=${Date.now()}&timeIn=${Number(Date.now() + (5 * 60 * 1000))}`).then((r) => console.log(r))
     setView("pass")
   }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -42,7 +46,7 @@ function App() {
               <>
                 <h2>Welcome, {user}</h2>
                 <p>Select a reason:</p>
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="radio-group">
                     <div className="radio-option">
                       <input
@@ -50,6 +54,7 @@ function App() {
                         id="lavatory"
                         name="location"
                         value="Lavatory"
+                        checked={selectedLocation === "Lavatory"}
                         onChange={handleChange}
                       />
                       <label htmlFor="lavatory">Lavatory</label>
@@ -61,6 +66,7 @@ function App() {
                         id="mainOffice"
                         name="location"
                         value="Main Office"
+                        checked={selectedLocation === "Main Office"}
                         onChange={handleChange}
                       />
                       <label htmlFor="mainOffice">Main Office</label>
@@ -72,6 +78,7 @@ function App() {
                         id="aHouseOffice"
                         name="location"
                         value="A-House Office"
+                        checked={selectedLocation === "A-House Office"}
                         onChange={handleChange}
                       />
                       <label htmlFor="aHouseOffice">A-House Office</label>
@@ -83,6 +90,7 @@ function App() {
                         id="bHouseOffice"
                         name="location"
                         value="B-House Office"
+                        checked={selectedLocation === "B-House Office"}
                         onChange={handleChange}
                       />
                       <label htmlFor="bHouseOffice">B-House Office</label>
@@ -93,7 +101,8 @@ function App() {
                         type="radio"
                         id="mediaCenter"
                         name="location"
-                        value="MediaCenter"
+                        value="Media Center"
+                        checked={selectedLocation === "Media Center"}
                         onChange={handleChange}
                       />
                       <label htmlFor="mediaCenter">Media Center</label>
@@ -105,6 +114,7 @@ function App() {
                         id="nurse"
                         name="location"
                         value="Nurse"
+                        checked={selectedLocation === "Nurse"}
                         onChange={handleChange}
                       />
                       <label htmlFor="nurse">Nurse</label>
@@ -116,19 +126,20 @@ function App() {
                         id="water"
                         name="location"
                         value="Water"
+                        checked={selectedLocation === "Water"}
                         onChange={handleChange}
                       />
                       <label htmlFor="water">Water</label>
                     </div>
                   </div>
-                  <button onClick={handleSubmit} type="submit" className="submit-button">
+                  <button type="submit" className="submit-button">
                     Submit
                   </button>
                 </form>
               </>
             )}</>
         ) : (<>
-          <HallPass studentName={user} location={selectedLocation}/>
+          <HallPass studentName={user} location={selectedLocation} />
         </>)}
       </header>
     </div>
