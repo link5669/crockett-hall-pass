@@ -3,7 +3,7 @@
 ## Features
 - Google OAuth for student authentication
 - Dashboard to view current active passes
-  - Dashboard filters by destination
+  - Filter by destination
   - Search by student to see historical pass data
 - Limit passes
   - per period
