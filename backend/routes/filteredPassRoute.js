@@ -2,7 +2,7 @@ import express from "express";
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 
-export default function getPassRoute(firebaseApp) {
+export default function filteredPassRoute(firebaseApp) {
     const router = express.Router();
     const db = getFirestore(firebaseApp);
     const SECONDS_IN_FIVE_MINUTES = 300
@@ -12,6 +12,7 @@ export default function getPassRoute(firebaseApp) {
             const q = query(
                 collection(db, "passes"),
                 where("timeIn", ">", currentTime),
+                where("destination", "==", req.query.destination)
             );
             const querySnapshot = await getDocs(q);
             let responses = []

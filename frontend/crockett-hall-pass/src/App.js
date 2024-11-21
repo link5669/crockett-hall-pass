@@ -4,20 +4,20 @@ import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import HallPass from './components/HallPass';
 import axios from "axios"
+import { Timestamp } from 'firebase/firestore';
 
 function App() {
   const [user, setUser] = useState(null)
   const [selectedLocation, setSelectedLocation] = useState('');
   const [view, setView] = useState("register")
+  const [requestResponse, setRequestResponse] = useState("")
   const handleChange = (event) => {
-    console.log(selectedLocation)
     setSelectedLocation(event.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log("submit!")
-    axios.post(`http://localhost:5001/api/registerPass?studentName=${user}&destination=${selectedLocation}&timeOut=${Date.now()}&timeIn=${Number(Date.now() + (5 * 60 * 1000))}`).then((r) => console.log(r))
+    axios.post(`http://localhost:5001/api/registerPass?studentName=${user}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
     setView("pass")
   }
 
@@ -27,21 +27,23 @@ function App() {
         {view == "register" ? (
           <>
             {user == null ? (
-              <GoogleLogin
-                onSuccess={credentialResponse => {
-                  const userObject = jwtDecode(credentialResponse.credential);
-                  const email = userObject.email;
-                  const name = userObject.name;
-                  const firstName = userObject.given_name;
-                  const lastName = userObject.family_name;
-                  const picture = userObject.picture;
-                  setUser(name)
-                }}
-                onError={() => {
-                  console.log('Login Failed');
-                }}
-                scope="email profile"
-              />
+              <>
+                <GoogleLogin
+                  onSuccess={credentialResponse => {
+                    const userObject = jwtDecode(credentialResponse.credential);
+                    const email = userObject.email;
+                    const name = userObject.name;
+                    const firstName = userObject.given_name;
+                    const lastName = userObject.family_name;
+                    const picture = userObject.picture;
+                    setUser(name)
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
+                  scope="email profile"
+                />
+              </>
             ) : (
               <>
                 <h2>Welcome, {user}</h2>
@@ -138,9 +140,9 @@ function App() {
                 </form>
               </>
             )}</>
-        ) : (<>
+        ) : requestResponse == "Request processed" ? (<>
           <HallPass studentName={user} location={selectedLocation} />
-        </>)}
+        </>) : (<p>{requestResponse}</p>)}
       </header>
     </div>
   );
