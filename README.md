@@ -8,3 +8,4 @@
 - Limit passes
   - per period
   - per day
+- Register conflicts to prevent two students from leaving class at the same time
