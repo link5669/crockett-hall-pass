@@ -1,3 +1,5 @@
+const inDev = true
+
 function getSecondsSince(pastTimestamp) {
     const currentTime = Date.now();
     const elapsedMilliseconds = currentTime - pastTimestamp;
@@ -5,4 +7,10 @@ function getSecondsSince(pastTimestamp) {
     return elapsedSeconds;
 }
 
-export { getSecondsSince }
+function getBackendURL() {
+    if (inDev) {
+        return "localhost:5001"
+    }
+}
+
+export { getSecondsSince, getBackendURL }

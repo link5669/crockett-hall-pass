@@ -1,5 +1,5 @@
 import express from "express";
-import { getFirestore, collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { getFirestore, collection, query, where, addDoc, getDocs, orderBy, limit } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { BELL_SCHEDULE, closestStartingBell } from "../utilities.js";
 const SECONDS_IN_FIVE_MINUTES = 300
@@ -13,9 +13,9 @@ export default function registerPassRoute(firebaseApp) {
 
   router.post("/", async (req, res) => {
 
-    if (await checkDailyLimit(db, req, res) == false || await checkPeriodLimit(db, req, res)) {
-      return
-    }
+    // if (await checkPeriodLimit(db, req, res) == false || await checkDailyLimit(db, req, res) == false) {
+    //   return
+    // }
 
     try {
       const docRef = await addDoc(collection(db, "passes"), {
@@ -73,11 +73,14 @@ async function checkPeriodLimit(db, req, res) {
   const querySnapshot = await getDocs(q);
   let passDate = ""
   querySnapshot.forEach(doc => {
-    console.log(doc.data().timeIn)
     passDate = doc.data().timeIn.toDate()
   });
 
-  if (closestStartingBell(passDate) == closestStartingBell(Date.now())) {
+  if (passDate == "") {
+    return true
+  }
+  
+  if (closestStartingBell(passDate) == closestStartingBell(new Date(Date.now()))) {
     res.status(200).json({ message: "You've requested too many passes this period" })
     ret = false
   }

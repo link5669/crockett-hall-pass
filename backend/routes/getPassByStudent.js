@@ -4,7 +4,6 @@ import { getFirestore, collection, getDocs, query, where } from 'firebase/firest
 export default function getPassByStudent(firebaseApp) {
     const router = express.Router();
     const db = getFirestore(firebaseApp);
-    const SECONDS_IN_FIVE_MINUTES = 300
     console.log("a")
     router.get("/student/:name", async (req, res) => {
         try {

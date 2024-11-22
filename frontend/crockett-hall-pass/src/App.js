@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import HallPass from './components/HallPass';
 import axios from "axios"
-import { Timestamp } from 'firebase/firestore';
+import { getBackendURL } from './utilities';
 
 function App() {
   const [user, setUser] = useState(null)
@@ -17,7 +17,7 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post(`http://localhost:5001/api/registerPass?studentName=${user}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
+    axios.post(`http://${getBackendURL()}/api/registerPass?studentName=${user}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
     setView("pass")
   }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import "./StudentView.css"
 import { Link } from 'react-router-dom';
+import { getBackendURL } from '../utilities';
 
 export default function StudentView() {
     const [name, setName] = useState('');
@@ -10,7 +11,7 @@ export default function StudentView() {
     const fetchPasses = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5001/api/passes/student/${name}`);
+            const res = await fetch(`http://${getBackendURL()}/api/passes/student/${name}`);
             const data = await res.json();
             console.log(data.responses[0].timeIn.seconds)
             setPasses(data.responses);

@@ -3,6 +3,7 @@ import axios from 'axios';
 import HallPass from './components/HallPass';
 import "./App.css"
 import { Link } from 'react-router-dom';
+import { getBackendURL } from './utilities';
 
 function App() {
   const [passes, setPasses] = useState([]);
@@ -11,11 +12,11 @@ function App() {
   useEffect(() => {
     const fetchPasses = async () => {
       try {
-        const response = ""
+        let response = ""
         if (filteredDestination == "All") {
-          response = await axios.get('http://localhost:5001/api/getPasses');
+          response = await axios.get(`http://${getBackendURL()}/api/getPasses`);
         } else {
-          response = await axios.get(`http://localhost:5001/api/filterPasses?destination=${filteredDestination}`);
+          response = await axios.get(`http://${getBackendURL()}/api/filterPasses?destination=${filteredDestination}`);
         }
         setPasses(response.data.responses);
       } catch (error) {
@@ -44,6 +45,11 @@ function App() {
               Student Lookup
             </button>
           </Link>
+          <Link to='/settings'>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              Settings
+            </button>
+          </Link>
           <div class="dropdown">
             <button class="dropbtn">{filteredDestination} ▼</button>
             <div class="dropdown-content">
@@ -62,7 +68,7 @@ function App() {
       <div className="dashboard">
         {passes.map((pass, index) => (
           <div
-            key={pass.id}
+            key={`${pass.id}-${pass.timeOut.seconds}`}
             className="pass-container"
             style={{
               marginTop: `${(index % 2) * 20}px`
