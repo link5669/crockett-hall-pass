@@ -1,3 +1,5 @@
+const IN_DEV = false
+
 const BELL_SCHEDULE = [
     [new Date(0, 0, 0, 8, 25), new Date(0, 0, 0, 9, 15)],
     [new Date(0, 0, 0, 9, 18), new Date(0, 0, 0, 9, 58)],
@@ -26,4 +28,4 @@ function closestStartingBell(currentTime) {
     return lastStartedPeriod - 1; 
 }
 
-export { BELL_SCHEDULE, closestStartingBell }
+export { BELL_SCHEDULE, closestStartingBell, IN_DEV }

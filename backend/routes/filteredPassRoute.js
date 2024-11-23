@@ -21,6 +21,16 @@ export default function filteredPassRoute(firebaseApp) {
                 console.log(doc.data().timeOut, currentTime)
                 responses.push(doc.data())
             });
+
+            q = query(
+                collection(db, "passes"),
+                where("studentName", "==", req.params.studentName)
+            );
+            querySnapshot = await getDocs(q);
+            activePassResponses = []
+            querySnapshot.forEach((doc) => {
+                activePassResponses.push(doc.data())
+            });
             res.status(200).json({ id: querySnapshot.id, responses: responses });
         } catch (error) {
             res.status(500).json({ error: error.message });
