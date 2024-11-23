@@ -1,25 +1,17 @@
 import express from "express";
 import { getFirestore, collection, getDocs, query, where, or } from 'firebase/firestore';
 
-export default function searchConflicts(firebaseApp) {
+export default function searchLimits(firebaseApp) {
     const router = express.Router();
     const db = getFirestore(firebaseApp);
     router.get("/", async (req, res) => {
         try {
             let q1 = query(
-                collection(db, "conflicts"),
-                where("studentA", "==", req.query.studentName),
+                collection(db, "limits"),
+                where("studentName", "==", req.query.studentName),
             );
             let querySnapshot = await getDocs(q1);
             let responses = []
-            querySnapshot.forEach((doc) => {
-                responses.push(doc.data())
-            });
-            q1 = query(
-                collection(db, "conflictsOh "),
-                where("studentB", "==", req.query.studentName),
-            );
-            querySnapshot = await getDocs(q1);
             querySnapshot.forEach((doc) => {
                 responses.push(doc.data())
             });
