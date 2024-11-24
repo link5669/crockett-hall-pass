@@ -1,7 +1,7 @@
 import express from "express";
 import { getFirestore, collection, query, where, addDoc, getDocs, orderBy, limit } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { closestStartingBell, IN_DEV } from "../utilities.js";
+import { closestStartingBell, IN_DEV, closestStartingBellTime } from "../utilities.js";
 const SECONDS_IN_FIVE_MINUTES = 300
 const SECONDS_IN_TWO_MINUTES = 120
 const PASS_PER_PERIOD = 1
@@ -15,7 +15,7 @@ export default function registerPassRoute(firebaseApp) {
   router.post("/", async (req, res) => {
 
     if (!IN_DEV) {
-      if ((await checkConflicts(db, req, res) == false || await checkPeriodLimit(db, req, res) == false || await checkDailyLimit(db, req, res) == false)) {
+      if (await checkConflicts(db, req, res) == false || await checkPeriodLimit(db, req, res) == false || await checkDailyLimit(db, req, res) == false) {
         return
       }
     }
@@ -73,34 +73,26 @@ async function checkDailyLimit(db, req, res) {
   return ret
 }
 
+//need to fix
 async function checkPeriodLimit(db, req, res) {
   let ret = true
   const today = new Date();
   today.setHours(8, 0, 0, 0);
   const eightAM = Timestamp.fromDate(today);
 
+  let closestBellTime = Timestamp.fromDate(closestStartingBellTime(new Date(Date.now())))
+
   const q = query(
     collection(db, "passes"),
-    where("studentEmail", "==", req.query.studentEmail),
-    where("timeIn", ">", eightAM),
-    orderBy("timeOut", "desc"),
-    limit(1)
+    where("email", "==", req.query.studentEmail),
+    where("timeIn", ">", closestBellTime),
+    orderBy("timeOut", "desc")
   )
 
+  console.log(req.query.studentEmail, closestBellTime.toDate().toString())
   const querySnapshot = await getDocs(q);
-  let passDate = ""
-  querySnapshot.forEach(doc => {
-    passDate = doc.data().timeIn.toDate()
-  });
 
-  if (passDate == "") {
-    return true
-  }
-
-  let passesThisPd = 0
-  if (closestStartingBell(passDate) == closestStartingBell(new Date(Date.now()))) {
-    passesThisPd++
-  }
+  let passesThisPd = querySnapshot.size
 
   let q1 = query(
     collection(db, "limits"),
@@ -113,8 +105,9 @@ async function checkPeriodLimit(db, req, res) {
   limitsSnapshot.forEach((doc) => {
     pdLimit = doc.data().pd
   })
+  console.log(passesThisPd, pdLimit)
 
-  if (passesThisPd > pdLimit) {
+  if (passesThisPd >= pdLimit) {
     res.status(200).json({ message: "You've requested too many passes this period" })
     ret = false
   }
@@ -141,6 +134,9 @@ async function checkConflicts(db, req, res) {
     responses.push(doc.data().studentA)
   });
   console.log(responses)
+  if (responses.length == 0) {
+    return true
+  }
   const sevenMinutesAgo = Timestamp.fromMillis(Date.now() - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
   let q = query(
     collection(db, "passes"),
