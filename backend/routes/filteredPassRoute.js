@@ -9,7 +9,7 @@ export default function filteredPassRoute(firebaseApp) {
     const SECONDS_IN_TWO_MINUTES = 120
     router.get("/", async (req, res) => {
         try {
-            const currentTime = Timestamp.fromMillis(Date.now() - SECONDS_IN_FIVE_MINUTES - SECONDS_IN_TWO_MINUTES);
+            const currentTime = Timestamp.fromMillis(parseInt(req.query.now) - SECONDS_IN_FIVE_MINUTES - SECONDS_IN_TWO_MINUTES);
             const q = query(
                 collection(db, "passes"),
                 where("timeOut", ">", currentTime),
@@ -18,7 +18,6 @@ export default function filteredPassRoute(firebaseApp) {
             const querySnapshot = await getDocs(q);
             let responses = []
             querySnapshot.forEach((doc) => {
-                console.log(doc.data().timeOut, currentTime)
                 responses.push(doc.data())
             });
 

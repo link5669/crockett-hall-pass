@@ -7,7 +7,6 @@ function HallPass({ studentName, studentEmail, location, timeOut, timeIn }) {
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
-    console.log(timeOut, Date.now())
     let interval = null;
     if (timeLeft > 0) {
       interval = setInterval(() => {

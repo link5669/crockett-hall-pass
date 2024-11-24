@@ -14,9 +14,9 @@ function App() {
       try {
         let response = ""
         if (filteredDestination == "All") {
-          response = await axios.get(`http://${getBackendURL()}/api/getPasses`);
+          response = await axios.get(`http://${getBackendURL()}/api/getPasses?now=${Date.now()}`);
         } else {
-          response = await axios.get(`http://${getBackendURL()}/api/filterPasses?destination=${filteredDestination}`);
+          response = await axios.get(`http://${getBackendURL()}/api/filterPasses?destination=${filteredDestination}&now=${Date.now()}`);
         }
         setPasses(response.data.responses);
       } catch (error) {
@@ -36,23 +36,25 @@ function App() {
         <div class="logo">Crockett Pass Dashboard</div>
         <div className="flex items-center gap-4">
           <Link to='/'>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+            <button className="px-4 py-2 ">
               Current Passes
             </button>
           </Link>
           <Link to='/lookup'>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+            <button className="px-4 py-2 ">
               Student Lookup
             </button>
           </Link>
           <Link to='/settings'>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+            <button className="px-4 py-2 ">
               Settings
             </button>
           </Link>
-          <div class="dropdownB">
+        </div>
+      </nav>
+      <div class="dropdownA">
             <button class="dropbtn">{filteredDestination} ▼</button>
-            <div class="dropdown-contentB">
+            <div class="dropdown-contentA">
               <a onClick={() => setFilteredDestination("All")}>All</a>
               <a onClick={() => setFilteredDestination("Lavatory")}>Lavatory</a>
               <a onClick={() => setFilteredDestination("Main Office")}>Main Office</a>
@@ -63,9 +65,8 @@ function App() {
               <a onClick={() => setFilteredDestination("Water")}>Water</a>
             </div>
           </div>
-        </div>
-      </nav>
       <div className="dashboard">
+      
         {passes.map((pass, index) => (
           <div
             key={`${pass.id}-${pass.timeOut.seconds}`}

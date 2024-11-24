@@ -9,7 +9,7 @@ export default function getPassRoute(firebaseApp) {
     const SECONDS_IN_TWO_MINUTES = 120
     router.get("/", async (req, res) => {
         try {
-            const sevenMinutesAgo = Timestamp.fromMillis(Date.now() - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
+            const sevenMinutesAgo = Timestamp.fromMillis(parseInt(req.query.now) - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
             const q = query(
                 collection(db, "passes"),
                 where("timeOut", ">", sevenMinutesAgo),

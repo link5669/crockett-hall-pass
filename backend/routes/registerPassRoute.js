@@ -1,7 +1,7 @@
 import express from "express";
-import { getFirestore, collection, query, where, addDoc, getDocs, orderBy, limit } from 'firebase/firestore';
+import { getFirestore, collection, query, where, addDoc, getDocs, orderBy } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import { closestStartingBell, IN_DEV, closestStartingBellTime } from "../utilities.js";
+import { IN_DEV, closestStartingBellTime } from "../utilities.js";
 const SECONDS_IN_FIVE_MINUTES = 300
 const SECONDS_IN_TWO_MINUTES = 120
 const PASS_PER_PERIOD = 1
@@ -73,14 +73,11 @@ async function checkDailyLimit(db, req, res) {
   return ret
 }
 
-//need to fix
 async function checkPeriodLimit(db, req, res) {
   let ret = true
   const today = new Date();
   today.setHours(8, 0, 0, 0);
-  const eightAM = Timestamp.fromDate(today);
-
-  let closestBellTime = Timestamp.fromDate(closestStartingBellTime(new Date(Date.now())))
+  let closestBellTime = Timestamp.fromDate(closestStartingBellTime(new Date(parseInt(req.query.now))))
 
   const q = query(
     collection(db, "passes"),
@@ -89,7 +86,6 @@ async function checkPeriodLimit(db, req, res) {
     orderBy("timeOut", "desc")
   )
 
-  console.log(req.query.studentEmail, closestBellTime.toDate().toString())
   const querySnapshot = await getDocs(q);
 
   let passesThisPd = querySnapshot.size
@@ -105,7 +101,6 @@ async function checkPeriodLimit(db, req, res) {
   limitsSnapshot.forEach((doc) => {
     pdLimit = doc.data().pd
   })
-  console.log(passesThisPd, pdLimit)
 
   if (passesThisPd >= pdLimit) {
     res.status(200).json({ message: "You've requested too many passes this period" })
@@ -133,11 +128,10 @@ async function checkConflicts(db, req, res) {
   querySnapshot.forEach((doc) => {
     responses.push(doc.data().studentA)
   });
-  console.log(responses)
   if (responses.length == 0) {
     return true
   }
-  const sevenMinutesAgo = Timestamp.fromMillis(Date.now() - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
+  const sevenMinutesAgo = Timestamp.fromMillis(parseInt(req.query.now) - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
   let q = query(
     collection(db, "passes"),
     where("timeOut", ">", sevenMinutesAgo),

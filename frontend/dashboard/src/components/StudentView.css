@@ -56,3 +56,50 @@
    .whitespace-nowrap {
     white-space: nowrap;
    }
+
+   .p-4 {
+    padding: 1rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .border {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #e5e7eb;  /* This is Tailwind's default border color */
+  }
+  
+  .p-2 {
+    padding: 0.5rem;
+  }
+  
+  .mr-2 {
+    margin-right: 0.5rem;
+  }
+  
+  .bg-blue-500 {
+    background-color: #3b82f6;  /* Tailwind's blue-500 color */
+  }
+  
+  .text-white {
+    color: #ffffff;
+  }
+  
+  .rounded {
+    border-radius: 0.25rem;
+  }
+
+  input {
+    border-color: #e5e7eb;
+    outline: none;  /* Optional: removes the default focus outline */
+  }
+  
+  input:focus {
+    border-color: #3b82f6;  /* Optional: changes border color on focus */
+  }
+  
+  button:hover {
+    background-color: #2563eb;  /* Optional: darker blue on hover */
+  }

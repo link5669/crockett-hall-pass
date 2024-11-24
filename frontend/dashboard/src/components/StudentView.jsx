@@ -18,13 +18,11 @@ export default function StudentView() {
             const data = await res.json();
             setPasses(data.responses);
             if (data.responses.length > 0) {
-                //check if limit row exists for user
-                console.log(data.responses)
                 axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
                     if (e.data.responses.length > 0) {
                         setLimitsValues(e.data.responses[0])
                     } else {
-                        submitLimitRequest(1,3, name)
+                        submitLimitRequest(1, 3, name)
                     }
                 })
                 getLimits(data.responses)
@@ -37,14 +35,13 @@ export default function StudentView() {
 
     const submitLimitRequest = (pd, day) => {
         axios.post(`http://${getBackendURL()}/api/setLimits?studentEmail=${name}&pd=${pd}&day=${day}`)
-        let obj = {day: day, pd: pd}
+        let obj = { day: day, pd: pd }
         setLimitsValues(obj)
     }
 
     const getLimits = () => {
         axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
             let obj = {}
-            console.log(e)
             obj.day = e.data.responses.length == 0 ? 3 : e.data.responses[0].day
             obj.pd = e.data.responses.length == 0 ? 1 : e.data.responses[0].pd
             setLimitsValues(obj)
@@ -57,17 +54,17 @@ export default function StudentView() {
                 <div class="logo">Crockett Pass Dashboard</div>
                 <div className="flex items-center gap-4">
                     <Link to='/'>
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded">
+                        <button className="px-4 py-2 ">
                             Current Passes
                         </button>
                     </Link>
                     <Link to='/lookup'>
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded">
+                        <button className="px-4 py-2 ">
                             Student Lookup
                         </button>
                     </Link>
                     <Link to='/settings'>
-                        <button className="px-4 py-2 bg-blue-500 text-white rounded">
+                        <button className="px-4 py-2 ">
                             Settings
                         </button>
                     </Link>
@@ -125,20 +122,20 @@ export default function StudentView() {
                                 <div class="dropdownA">
                                     <button class="dropbtn">Passes per pd ▼</button>
                                     <div class="dropdown-contentA">
-                                        <a onClick={() => submitLimitRequest(1,limitsValues.day)}>1</a>
-                                        <a onClick={() => submitLimitRequest(2,limitsValues.day)}>2</a>
-                                        <a onClick={() => submitLimitRequest(3,limitsValues.day)}>3</a>
-                                        <a onClick={() => submitLimitRequest(100,limitsValues.day)}>Unlimited</a>
+                                        <a onClick={() => submitLimitRequest(1, limitsValues.day)}>1</a>
+                                        <a onClick={() => submitLimitRequest(2, limitsValues.day)}>2</a>
+                                        <a onClick={() => submitLimitRequest(3, limitsValues.day)}>3</a>
+                                        <a onClick={() => submitLimitRequest(100, limitsValues.day)}>Unlimited</a>
                                     </div>
                                 </div>
                                 <div class="dropdownB">
                                     <button class="dropbtn">Passes per day ▼</button>
                                     <div class="dropdown-contentB">
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd,3)}>3</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd,5)}>5</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd,7)}>7</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd,10)}>10</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd,100)}>Unlimited</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 3)}>3</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 5)}>5</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 7)}>7</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 10)}>10</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 100)}>Unlimited</a>
                                     </div>
                                 </div>
                             </>
