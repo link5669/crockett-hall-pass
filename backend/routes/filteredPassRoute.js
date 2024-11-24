@@ -24,7 +24,7 @@ export default function filteredPassRoute(firebaseApp) {
 
             q = query(
                 collection(db, "passes"),
-                where("studentName", "==", req.params.studentName)
+                where("studentEmail", "==", req.params.studentEmail)
             );
             querySnapshot = await getDocs(q);
             activePassResponses = []

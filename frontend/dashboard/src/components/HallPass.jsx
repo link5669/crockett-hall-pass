@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import "./HallPass.css"
 import { getSecondsSince } from '../utilities';
 
-function HallPass({ studentName, location, timeOut, timeIn }) {
+function HallPass({ studentName, studentEmail, location, timeOut, timeIn }) {
   const [timeLeft, setTimeLeft] = useState(300 - getSecondsSince(Number(timeOut)));
   const [isActive, setIsActive] = useState(true);
 
@@ -29,6 +29,7 @@ function HallPass({ studentName, location, timeOut, timeIn }) {
         <h2>Hall Pass</h2>
         <div className="student-info">
           <p className="name">Student: {studentName}</p>
+          <p className="name">Email: {studentEmail}</p>
           <p className="destination">Destination: {location}</p>
         </div>
         <div className="timer-container">

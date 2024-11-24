@@ -8,7 +8,7 @@ export default function searchLimits(firebaseApp) {
         try {
             let q1 = query(
                 collection(db, "limits"),
-                where("studentName", "==", req.query.studentName),
+                where("studentEmail", "==", req.query.studentEmail),
             );
             let querySnapshot = await getDocs(q1);
             let responses = []

@@ -23,6 +23,7 @@ export default function registerPassRoute(firebaseApp) {
     try {
       await addDoc(collection(db, "passes"), {
         studentName: req.query.studentName,
+        email: req.query.studentEmail,
         destination: req.query.destination,
         timeOut: Timestamp.now(),
         timeIn: new Timestamp(Timestamp.now().seconds + SECONDS_IN_FIVE_MINUTES)
@@ -46,13 +47,26 @@ async function checkDailyLimit(db, req, res) {
 
   const q = query(
     collection(db, "passes"),
-    where("studentName", "==", req.query.studentName),
+    where("studentEmail", "==", req.query.studentEmail),
     where("timeIn", ">", eightAM)
   );
 
   const querySnapshot = await getDocs(q);
   const count = querySnapshot.size;
-  if (count >= PASS_PER_DAY) {
+
+  let q1 = query(
+    collection(db, "limits"),
+    where("studentEmail", "==", req.query.studentEmail),
+  );
+
+  let limitsSnapshot = await getDocs(q1);
+  let dayLimit = PASS_PER_DAY
+
+  limitsSnapshot.forEach((doc) => {
+    dayLimit = doc.data().day
+  })
+
+  if (count >= dayLimit) {
     res.status(200).json({ message: "You've requested too many passes today" })
     ret = false
   }
@@ -67,7 +81,7 @@ async function checkPeriodLimit(db, req, res) {
 
   const q = query(
     collection(db, "passes"),
-    where("studentName", "==", req.query.studentName),
+    where("studentEmail", "==", req.query.studentEmail),
     where("timeIn", ">", eightAM),
     orderBy("timeOut", "desc"),
     limit(1)
@@ -83,7 +97,24 @@ async function checkPeriodLimit(db, req, res) {
     return true
   }
 
+  let passesThisPd = 0
   if (closestStartingBell(passDate) == closestStartingBell(new Date(Date.now()))) {
+    passesThisPd++
+  }
+
+  let q1 = query(
+    collection(db, "limits"),
+    where("studentEmail", "==", req.query.studentEmail),
+  );
+
+  let limitsSnapshot = await getDocs(q1);
+  let pdLimit = PASS_PER_PERIOD
+
+  limitsSnapshot.forEach((doc) => {
+    pdLimit = doc.data().pd
+  })
+
+  if (passesThisPd > pdLimit) {
     res.status(200).json({ message: "You've requested too many passes this period" })
     ret = false
   }
@@ -94,7 +125,7 @@ async function checkPeriodLimit(db, req, res) {
 async function checkConflicts(db, req, res) {
   let q1 = query(
     collection(db, "conflicts"),
-    where("studentA", "==", req.query.studentName),
+    where("studentA", "==", req.query.studentEmail),
   );
   let querySnapshot = await getDocs(q1);
   let responses = []
@@ -103,26 +134,24 @@ async function checkConflicts(db, req, res) {
   });
   q1 = query(
     collection(db, "conflicts"),
-    where("studentB", "==", req.query.studentName),
+    where("studentB", "==", req.query.studentEmail),
   );
   querySnapshot = await getDocs(q1);
   querySnapshot.forEach((doc) => {
     responses.push(doc.data().studentA)
   });
+  console.log(responses)
   const sevenMinutesAgo = Timestamp.fromMillis(Date.now() - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
   let q = query(
     collection(db, "passes"),
     where("timeOut", ">", sevenMinutesAgo),
+    where("email", "in", responses)
   )
+  //"in" has a limit of 10!!
   querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    responses.forEach(response => {
-      if (response == doc.data().studentName || response == doc.data().studentName) {
-        res.status(200).json({ message: "Please wait ten minutes and try again" })
-        return false
-      }
-    })
-  });
+  if (querySnapshot.size > 0) {
+    res.status(200).json({ message: "Please wait ten minutes and try again" })
+  }
 
   return true
 }

@@ -8,7 +8,7 @@ export default function getPassByStudent(firebaseApp) {
         try {
             const q = query(
                 collection(db, "passes"),
-                where("studentName", "==", req.params.name)
+                where("email", "==", req.params.name)
             );
             const querySnapshot = await getDocs(q);
             let responses = []

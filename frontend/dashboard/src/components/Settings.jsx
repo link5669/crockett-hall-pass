@@ -20,7 +20,7 @@ export default function Settings() {
 
     const handleSearchSubmit = e => {
         e.preventDefault()
-        axios.get(`http://${getBackendURL()}/api/searchConflicts?studentName=${searchVal}`).then(e => {
+        axios.get(`http://${getBackendURL()}/api/searchConflicts?studentEmail=${searchVal}`).then(e => {
             setSearchData(e.data.responses)
             console.log(e.data)
         })

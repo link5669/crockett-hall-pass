@@ -50,9 +50,9 @@ function App() {
               Settings
             </button>
           </Link>
-          <div class="dropdown">
+          <div class="dropdownB">
             <button class="dropbtn">{filteredDestination} ▼</button>
-            <div class="dropdown-content">
+            <div class="dropdown-contentB">
               <a onClick={() => setFilteredDestination("All")}>All</a>
               <a onClick={() => setFilteredDestination("Lavatory")}>Lavatory</a>
               <a onClick={() => setFilteredDestination("Main Office")}>Main Office</a>
@@ -76,6 +76,7 @@ function App() {
           >
             <HallPass
               studentName={pass.studentName}
+              studentEmail={pass.email}
               location={pass.destination}
               timeOut={pass.timeOut.seconds * 1000}
               timeIn={pass.timeIn.seconds * 1000}

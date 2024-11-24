@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import "./HallPass.css"
 
-function HallPass({ studentName, location }) {
+function HallPass({ studentName, location, studentEmail }) {
   const [timeLeft, setTimeLeft] = useState(300);
   const [isActive, setIsActive] = useState(true);
 
@@ -27,6 +27,7 @@ function HallPass({ studentName, location }) {
         <h2>Hall Pass</h2>
         <div className="student-info">
           <p className="name">Student: {studentName}</p>
+          <p className="name">Email: {studentEmail}</p>
           <p className="destination">Destination: {location}</p>
         </div>
         

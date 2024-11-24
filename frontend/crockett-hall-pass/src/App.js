@@ -17,7 +17,7 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post(`http://${getBackendURL()}/api/registerPass?studentName=${user}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
+    axios.post(`http://${getBackendURL()}/api/registerPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
     setView("pass")
   }
 
@@ -36,7 +36,7 @@ function App() {
                     const firstName = userObject.given_name;
                     const lastName = userObject.family_name;
                     const picture = userObject.picture;
-                    setUser(name)
+                    setUser([name, email])
                   }}
                   onError={() => {
                     console.log('Login Failed');
@@ -46,7 +46,7 @@ function App() {
               </>
             ) : (
               <>
-                <h2>Welcome, {user}</h2>
+                <h2>Welcome, {user[0]}</h2>
                 <p>Select a reason:</p>
                 <form onSubmit={handleSubmit}>
                   <div className="radio-group">
@@ -141,7 +141,7 @@ function App() {
               </>
             )}</>
         ) : requestResponse == "Request processed" ? (<>
-          <HallPass studentName={user} location={selectedLocation} />
+          <HallPass studentName={user[0]} studentEmail={user[1]} location={selectedLocation} />
         </>) : (<p>{requestResponse}</p>)}
       </header>
     </div>

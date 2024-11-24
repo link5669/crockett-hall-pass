@@ -9,9 +9,6 @@ export default function StudentView() {
     const [name, setName] = useState('');
     const [passes, setPasses] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [newCol1, setNewCol1] = useState("")
-    const [newCol2, setNewCol2] = useState("")
-    const [searchVal, setSearchVal] = useState("")
     const [limitsValues, setLimitsValues] = useState("")
 
     const fetchPasses = async () => {
@@ -19,9 +16,17 @@ export default function StudentView() {
         try {
             const res = await fetch(`http://${getBackendURL()}/api/passes/student/${name}`);
             const data = await res.json();
-            console.log("responses", data.responses)
             setPasses(data.responses);
             if (data.responses.length > 0) {
+                //check if limit row exists for user
+                console.log(data.responses)
+                axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
+                    if (e.data.responses.length > 0) {
+                        setLimitsValues(e.data.responses[0])
+                    } else {
+                        submitLimitRequest(1,3, name)
+                    }
+                })
                 getLimits(data.responses)
             }
         } catch (err) {
@@ -30,14 +35,16 @@ export default function StudentView() {
         setLoading(false);
     };
 
-    const submitLimitRequest = (field, value) => {
-        axios.post(`http://${getBackendURL()}/api/setCustomLimitRoute?studentName=${passes[0].studentName}&field=${field}&value=${value}`)
-        getLimits(passes)
+    const submitLimitRequest = (pd, day) => {
+        axios.post(`http://${getBackendURL()}/api/setLimits?studentEmail=${name}&pd=${pd}&day=${day}`)
+        let obj = {day: day, pd: pd}
+        setLimitsValues(obj)
     }
 
-    const getLimits = (passes) => {
-        axios.get(`http://${getBackendURL()}/api/searchLimits?studentName=${passes[0].studentName}`).then(e => {
+    const getLimits = () => {
+        axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
             let obj = {}
+            console.log(e)
             obj.day = e.data.responses.length == 0 ? 3 : e.data.responses[0].day
             obj.pd = e.data.responses.length == 0 ? 1 : e.data.responses[0].pd
             setLimitsValues(obj)
@@ -118,20 +125,20 @@ export default function StudentView() {
                                 <div class="dropdownA">
                                     <button class="dropbtn">Passes per pd ▼</button>
                                     <div class="dropdown-contentA">
-                                        <a onClick={() => submitLimitRequest("period", "1")}>1</a>
-                                        <a onClick={() => submitLimitRequest("period", "2")}>2</a>
-                                        <a onClick={() => submitLimitRequest("period", "3")}>3</a>
-                                        <a onClick={() => submitLimitRequest("period", "100")}>Unlimited</a>
+                                        <a onClick={() => submitLimitRequest(1,limitsValues.day)}>1</a>
+                                        <a onClick={() => submitLimitRequest(2,limitsValues.day)}>2</a>
+                                        <a onClick={() => submitLimitRequest(3,limitsValues.day)}>3</a>
+                                        <a onClick={() => submitLimitRequest(100,limitsValues.day)}>Unlimited</a>
                                     </div>
                                 </div>
                                 <div class="dropdownB">
                                     <button class="dropbtn">Passes per day ▼</button>
                                     <div class="dropdown-contentB">
-                                        <a onClick={() => submitLimitRequest("day", "3")}>3</a>
-                                        <a onClick={() => submitLimitRequest("day", "5")}>5</a>
-                                        <a onClick={() => submitLimitRequest("day", "7")}>7</a>
-                                        <a onClick={() => submitLimitRequest("day", "10")}>10</a>
-                                        <a onClick={() => submitLimitRequest("day", "100")}>Unlimited</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd,3)}>3</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd,5)}>5</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd,7)}>7</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd,10)}>10</a>
+                                        <a onClick={() => submitLimitRequest(limitsValues.pd,100)}>Unlimited</a>
                                     </div>
                                 </div>
                             </>

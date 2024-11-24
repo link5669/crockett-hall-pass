@@ -8,7 +8,7 @@ export default function searchConflicts(firebaseApp) {
         try {
             let q1 = query(
                 collection(db, "conflicts"),
-                where("studentA", "==", req.query.studentName),
+                where("studentA", "==", req.query.studentEmail),
             );
             let querySnapshot = await getDocs(q1);
             let responses = []
@@ -17,7 +17,7 @@ export default function searchConflicts(firebaseApp) {
             });
             q1 = query(
                 collection(db, "conflictsOh "),
-                where("studentB", "==", req.query.studentName),
+                where("studentB", "==", req.query.studentEmail),
             );
             querySnapshot = await getDocs(q1);
             querySnapshot.forEach((doc) => {
