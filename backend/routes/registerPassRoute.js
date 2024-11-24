@@ -151,6 +151,7 @@ async function checkConflicts(db, req, res) {
   querySnapshot = await getDocs(q);
   if (querySnapshot.size > 0) {
     res.status(200).json({ message: "Please wait ten minutes and try again" })
+    return false
   }
 
   return true
