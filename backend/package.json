@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "env": "^0.0.2",
     "express": "^4.21.1",
     "firebase": "^11.0.2"
   }
