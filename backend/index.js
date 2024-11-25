@@ -8,6 +8,7 @@ import registerConflictRoute from "./routes/registerConflictRoute.js";
 import searchConflicts from "./routes/searchConflicts.js";
 import setCustomLimitRoute from "./routes/setCustomLimitRoute.js";
 import searchLimits from "./routes/getLimitsRoute.js";
+import "dotenv/config.js";
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
