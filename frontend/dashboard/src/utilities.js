@@ -1,5 +1,3 @@
-import "dotenv/config.js";
-
 function getSecondsSince(pastTimestamp) {
     const currentTime = Date.now();
     const elapsedMilliseconds = currentTime - pastTimestamp;
@@ -8,7 +6,7 @@ function getSecondsSince(pastTimestamp) {
 }
 
 function getBackendURL() {
-    if (process.env.PRODUCTION == 'false') {
+    if (process.env.REACT_APP_PRODUCTION == 'false') {
         return "http://localhost:5001"
     } else {
         return "https://crockett-hall-pass.vercel.app"
