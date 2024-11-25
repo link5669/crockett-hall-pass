@@ -132,7 +132,8 @@ async function checkConflicts(db, req, res) {
   }
   let currDate = new Date()
   currDate.setMinutes(currDate.getMinutes() - 7)
-  const sevenMinutesAgo = Timestamp.fromDate(currDate)  let q = query(
+  const sevenMinutesAgo = Timestamp.fromDate(currDate)  
+  let q = query(
     collection(db, "passes"),
     where("timeOut", ">", sevenMinutesAgo),
     where("email", "in", responses)
