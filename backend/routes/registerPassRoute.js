@@ -78,7 +78,7 @@ async function checkPeriodLimit(db, req, res) {
   const today = new Date();
   today.setHours(8, 0, 0, 0);
   let closestBellTime = Timestamp.fromDate(closestStartingBellTime(new Date(parseInt(req.query.now))))
-
+  console.log(req.query)
   const q = query(
     collection(db, "passes"),
     where("email", "==", req.query.studentEmail),
