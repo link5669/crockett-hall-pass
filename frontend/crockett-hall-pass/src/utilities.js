@@ -1,6 +1,7 @@
-const inDev = true
+import "dotenv/config.js";
+
 function getBackendURL() {
-    if (inDev) {
+    if (process.env.PRODUCTION == 'false') {
         return "http://localhost:5001"
     } else {
         return "https://crockett-hall-pass.vercel.app"

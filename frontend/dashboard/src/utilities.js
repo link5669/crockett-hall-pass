@@ -1,4 +1,4 @@
-const inDev = true
+import "dotenv/config.js";
 
 function getSecondsSince(pastTimestamp) {
     const currentTime = Date.now();
@@ -8,7 +8,7 @@ function getSecondsSince(pastTimestamp) {
 }
 
 function getBackendURL() {
-    if (inDev) {
+    if (process.env.PRODUCTION == 'false') {
         return "http://localhost:5001"
     } else {
         return "https://crockett-hall-pass.vercel.app"
