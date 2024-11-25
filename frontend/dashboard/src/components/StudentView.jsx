@@ -105,7 +105,7 @@ export default function StudentView() {
                                     <tr key={i}>
                                         <td className="px-6 py-4 whitespace-nowrap">{pass.studentName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{pass.destination}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{new Date(pass.timeOut.seconds * 1000).toISOString()}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">{new Date(pass.timeOut.seconds * 1000).toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -120,20 +120,20 @@ export default function StudentView() {
                                 <div class="dropdownA">
                                     <button class="dropbtn">Passes per pd ▼</button>
                                     <div class="dropdown-contentA">
-                                        <a onClick={() => submitLimitRequest(1, limitsValues.day)}>1</a>
-                                        <a onClick={() => submitLimitRequest(2, limitsValues.day)}>2</a>
-                                        <a onClick={() => submitLimitRequest(3, limitsValues.day)}>3</a>
-                                        <a onClick={() => submitLimitRequest(100, limitsValues.day)}>Unlimited</a>
+                                        <p onClick={() => submitLimitRequest(1, limitsValues.day)}>1</p>
+                                        <p onClick={() => submitLimitRequest(2, limitsValues.day)}>2</p>
+                                        <p onClick={() => submitLimitRequest(3, limitsValues.day)}>3</p>
+                                        <p onClick={() => submitLimitRequest(100, limitsValues.day)}>Unlimited</p>
                                     </div>
                                 </div>
                                 <div class="dropdownB">
                                     <button class="dropbtn">Passes per day ▼</button>
                                     <div class="dropdown-contentB">
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 3)}>3</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 5)}>5</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 7)}>7</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 10)}>10</a>
-                                        <a onClick={() => submitLimitRequest(limitsValues.pd, 100)}>Unlimited</a>
+                                        <p onClick={() => submitLimitRequest(limitsValues.pd, 3)}>3</p>
+                                        <p onClick={() => submitLimitRequest(limitsValues.pd, 5)}>5</p>
+                                        <p onClick={() => submitLimitRequest(limitsValues.pd, 7)}>7</p>
+                                        <p onClick={() => submitLimitRequest(limitsValues.pd, 10)}>10</p>
+                                        <p onClick={() => submitLimitRequest(limitsValues.pd, 100)}>Unlimited</p>
                                     </div>
                                 </div>
                             </>

@@ -1,4 +1,4 @@
-const inDev = false
+const inDev = true
 
 function getSecondsSince(pastTimestamp) {
     const currentTime = Date.now();
