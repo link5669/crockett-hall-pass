@@ -14,11 +14,11 @@ export default function StudentView() {
     const fetchPasses = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`http://${getBackendURL()}/api/passes/student/${name}`);
+            const res = await fetch(`${getBackendURL()}/api/passes/student/${name}`);
             const data = await res.json();
             setPasses(data.responses);
             if (data.responses.length > 0) {
-                axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
+                axios.get(`${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
                     if (e.data.responses.length > 0) {
                         setLimitsValues(e.data.responses[0])
                     } else {
@@ -34,13 +34,13 @@ export default function StudentView() {
     };
 
     const submitLimitRequest = (pd, day) => {
-        axios.post(`http://${getBackendURL()}/api/setLimits?studentEmail=${name}&pd=${pd}&day=${day}`)
+        axios.post(`${getBackendURL()}/api/setLimits?studentEmail=${name}&pd=${pd}&day=${day}`)
         let obj = { day: day, pd: pd }
         setLimitsValues(obj)
     }
 
     const getLimits = () => {
-        axios.get(`http://${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
+        axios.get(`${getBackendURL()}/api/searchLimits?studentEmail=${name}`).then(e => {
             let obj = {}
             obj.day = e.data.responses.length == 0 ? 3 : e.data.responses[0].day
             obj.pd = e.data.responses.length == 0 ? 1 : e.data.responses[0].pd

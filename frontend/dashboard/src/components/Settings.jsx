@@ -15,12 +15,12 @@ export default function Settings() {
         setRows([...rows, { col1: newCol1, col2: newCol2 }]);
         setNewCol1('');
         setNewCol2('');
-        axios.post(`http://${getBackendURL()}/api/registerConflict?studentA=${newCol1}&studentB=${newCol2}`)
+        axios.post(`${getBackendURL()}/api/registerConflict?studentA=${newCol1}&studentB=${newCol2}`)
     };
 
     const handleSearchSubmit = e => {
         e.preventDefault()
-        axios.get(`http://${getBackendURL()}/api/searchConflicts?studentEmail=${searchVal}`).then(e => {
+        axios.get(`${getBackendURL()}/api/searchConflicts?studentEmail=${searchVal}`).then(e => {
             setSearchData(e.data.responses)
         })
     }

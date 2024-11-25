@@ -27,9 +27,9 @@ function App() {
       try {
         let response = ""
         if (filteredDestination === "All") {
-          response = await axios.get(`http://${getBackendURL()}/api/getPasses?now=${Date.now()}`);
+          response = await axios.get(`${getBackendURL()}/api/getPasses?now=${Date.now()}`);
         } else {
-          response = await axios.get(`http://${getBackendURL()}/api/filterPasses?destination=${filteredDestination}&now=${Date.now()}`);
+          response = await axios.get(`${getBackendURL()}/api/filterPasses?destination=${filteredDestination}&now=${Date.now()}`);
         }
         setPasses(response.data.responses);
       } catch (error) {
