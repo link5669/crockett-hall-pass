@@ -26,7 +26,6 @@ export default function registerPassRoute(firebaseApp) {
         email: req.query.studentEmail,
         destination: req.query.destination,
         timeOut: Timestamp.now(),
-        timeIn: new Timestamp(Timestamp.now().seconds + SECONDS_IN_FIVE_MINUTES)
       });
       res.status(200).json({
         message: "Request processed"
@@ -35,20 +34,19 @@ export default function registerPassRoute(firebaseApp) {
       res.status(500).json({ error: error.message });
     }
   });
-
   return router;
 }
 
 async function checkDailyLimit(db, req, res) {
   let ret = true
   const today = new Date();
-  today.setHours(8, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
   const eightAM = Timestamp.fromDate(today);
 
   const q = query(
     collection(db, "passes"),
     where("studentEmail", "==", req.query.studentEmail),
-    where("timeIn", ">", eightAM)
+    where("timeOut", ">", eightAM)
   );
 
   const querySnapshot = await getDocs(q);
@@ -76,14 +74,14 @@ async function checkDailyLimit(db, req, res) {
 async function checkPeriodLimit(db, req, res) {
   let ret = true
   const today = new Date();
-  today.setHours(8, 0, 0, 0);
-  console.log(req.query)
-  let closestBellTime = Timestamp.fromDate(closestStartingBellTime(new Date(parseInt(req.query.now))))
+  today.setHours(0, 0, 0, 0);
   
+  let closestBellTime = closestStartingBellTime(Timestamp.now())
+
   const q = query(
     collection(db, "passes"),
     where("email", "==", req.query.studentEmail),
-    where("timeIn", ">", closestBellTime),
+    where("timeOut", ">", closestBellTime),
     orderBy("timeOut", "desc")
   )
 
@@ -147,33 +145,3 @@ async function checkConflicts(db, req, res) {
 
   return true
 }
-
-
-
-// CHECK PASSES PER WEEK?
-//   const docRef = await addDoc(collection(db, "passes"), {
-//     studentName: req.query.studentName,
-//     destination: req.query.destination,
-//     timeOut: Timestamp.now(),
-//     timeIn: new Timestamp(Timestamp.now().seconds + SECONDS_IN_FIVE_MINUTES)
-//   });
-//   res.status(200).json({ id: docRef.id });
-// } catch (error) {
-//   res.status(500).json({ error: error.message });
-// }
-// const monday = new Date();
-// monday.setDate(monday.getDate() - monday.getDay() + 1);
-// monday.setHours(8, 0, 0, 0);
-// const mondayEightAM = Timestamp.fromDate(monday);
-
-// q = query(
-//   collection(db, "passes"),
-//   where("studentName", "==", req.params.name),
-//   where("timeIn", ">", mondayEightAM)
-// );
-
-// querySnapshot = await getDocs(q);
-// count = querySnapshot.size;
-// if (count >= PASS_PER_WEEK) {
-//   res.status(200).json({ message: "You've requested too many passes this week" })
-// }

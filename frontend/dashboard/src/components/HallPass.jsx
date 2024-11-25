@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import "./HallPass.css"
 import { getSecondsSince } from '../utilities';
 
-function HallPass({ studentName, studentEmail, location, timeOut, timeIn }) {
+function HallPass({ studentName, studentEmail, location, timeOut }) {
   const [timeLeft, setTimeLeft] = useState(300 - getSecondsSince(Number(timeOut)));
   const [isActive, setIsActive] = useState(true);
 

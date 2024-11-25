@@ -17,7 +17,7 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post(`${getBackendURL()}/api/registerPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&now=${Date.now()}`).then((r) => setRequestResponse(r.data.message))
+    axios.post(`${getBackendURL()}/api/registerPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}`).then((r) => setRequestResponse(r.data.message))
     setView("pass")
   }
 

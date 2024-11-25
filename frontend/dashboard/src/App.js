@@ -15,6 +15,7 @@ function App() {
     if (localStorage.getItem('loggedIn') == 'true') {
       const ONE_HOUR = 3600000; 
       const loginDate = parseInt(localStorage.getItem('loginDate'));
+      //only for local use, do not change to ISO
       const timeSinceLogin = Date.now() - loginDate;
       if (timeSinceLogin < ONE_HOUR) {
         setLoggedIn(true)
@@ -27,9 +28,9 @@ function App() {
       try {
         let response = ""
         if (filteredDestination === "All") {
-          response = await axios.get(`${getBackendURL()}/api/getPasses?now=${Date.now()}`);
+          response = await axios.get(`${getBackendURL()}/api/getPasses`);
         } else {
-          response = await axios.get(`${getBackendURL()}/api/filterPasses?destination=${filteredDestination}&now=${Date.now()}`);
+          response = await axios.get(`${getBackendURL()}/api/filterPasses?destination=${filteredDestination}`);
         }
         setPasses(response.data.responses);
       } catch (error) {
@@ -80,7 +81,6 @@ function App() {
           </div>
         </div>
         <div className="dashboard">
-
           {passes.map((pass, index) => (
             <div
               key={`${pass.id}-${pass.timeOut.seconds}`}
@@ -94,7 +94,7 @@ function App() {
                 studentEmail={pass.email}
                 location={pass.destination}
                 timeOut={pass.timeOut.seconds * 1000}
-                timeIn={pass.timeIn.seconds * 1000}
+                timeIn={(pass.timeOut.seconds * 1000) + (5 * 60 *1000)}
               />
             </div>
           ))}

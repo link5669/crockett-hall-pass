@@ -1,73 +1,73 @@
+import { Timestamp } from "firebase/firestore";
+
 const IN_DEV = false
 
+//IN UTC
 const BELL_SCHEDULE = [
-    [new Date(0, 0, 0, 8, 25), new Date(0, 0, 0, 9, 15)],   // 8:25-9:15
-    [new Date(0, 0, 0, 9, 18), new Date(0, 0, 0, 9, 58)],   // 9:18-9:58
-    [new Date(0, 0, 0, 10, 1), new Date(0, 0, 0, 10, 41)],  // 10:01-10:41
-    [new Date(0, 0, 0, 10, 43), new Date(0, 0, 0, 11, 24)], // 10:43-11:24
-    [new Date(0, 0, 0, 11, 27), new Date(0, 0, 0, 12, 7)],  // 11:27-12:07
-    [new Date(0, 0, 0, 12, 10), new Date(0, 0, 0, 12, 50)], // 12:10-12:50
-    [new Date(0, 0, 0, 12, 53), new Date(0, 0, 0, 13, 33)], // 12:53-1:33
-    [new Date(0, 0, 0, 13, 36), new Date(0, 0, 0, 14, 16)], // 1:36-2:16
-    [new Date(0, 0, 0, 14, 19), new Date(0, 0, 0, 15, 0)]   // 2:19-3:00
+    [Timestamp.fromDate(new Date(0, 0, 0, 13, 25)), Timestamp.fromDate(new Date(0, 0, 0, 14, 15))],   // 8:25-9:15
+    [Timestamp.fromDate(new Date(0, 0, 0, 14, 18)), Timestamp.fromDate(new Date(0, 0, 0, 14, 58))],   // 9:18-9:58
+    [Timestamp.fromDate(new Date(0, 0, 0, 15, 1)), Timestamp.fromDate(new Date(0, 0, 0, 15, 41))],  // 10:01-10:41
+    [Timestamp.fromDate(new Date(0, 0, 0, 15, 43)), Timestamp.fromDate(new Date(0, 0, 0, 16, 24))], // 10:43-11:24
+    [Timestamp.fromDate(new Date(0, 0, 0, 16, 27)), Timestamp.fromDate(new Date(0, 0, 0, 17, 7))],  // 11:27-12:07
+    [Timestamp.fromDate(new Date(0, 0, 0, 17, 10)), Timestamp.fromDate(new Date(0, 0, 0, 17, 50))], // 12:10-12:50
+    [Timestamp.fromDate(new Date(0, 0, 0, 17, 53)), Timestamp.fromDate(new Date(0, 0, 0, 18, 33))], // 12:53-1:33
+    [Timestamp.fromDate(new Date(0, 0, 0, 18, 36)), Timestamp.fromDate(new Date(0, 0, 0, 19, 16))], // 1:36-2:16
+    [Timestamp.fromDate(new Date(0, 0, 0, 19, 19)), Timestamp.fromDate(new Date(0, 0, 0, 20, 0))]   // 2:19-3:00
 ];
 
 function closestStartingBellTime(currentTime) {
-    const hours = currentTime.getHours();
-    const minutes = currentTime.getMinutes();
-    const today = new Date();  // Get today's date
+    const currentTimeDate = currentTime.toDate()
+    const today = Timestamp.now().toDate();
 
-    const compareTime = new Date(
+    let lastStartedPeriod = -1;
+    const compareTimeDate = new Date(
         today.getFullYear(),
         today.getMonth(),
         today.getDate(),
-        hours,
-        minutes
+        currentTimeDate.getHours(),
+        currentTimeDate.getMinutes()
     );
 
-    let lastStartedPeriod = -1;
-
     for (let i = 0; i < BELL_SCHEDULE.length; i++) {
-        const bellTime = new Date(
+        const compareDate = new Date(
             today.getFullYear(),
             today.getMonth(),
             today.getDate(),
-            BELL_SCHEDULE[i][0].getHours(),
-            BELL_SCHEDULE[i][0].getMinutes()
+            BELL_SCHEDULE[i][0].toDate().getHours(),
+            BELL_SCHEDULE[i][0].toDate().getMinutes()
         );
 
-        if (compareTime >= bellTime) {
+        if (compareTimeDate.getTime() >= compareDate.getTime()) {
             lastStartedPeriod = i;
         } else {
             break;
         }
     }
 
-    if (lastStartedPeriod === -1) {
-        return null;
-    }
+    if (lastStartedPeriod === -1) return null;
 
-    return new Date(
+    const resultDate = new Date(
         today.getFullYear(),
         today.getMonth(),
         today.getDate(),
-        BELL_SCHEDULE[lastStartedPeriod][0].getHours(),
-        BELL_SCHEDULE[lastStartedPeriod][0].getMinutes()
+        BELL_SCHEDULE[lastStartedPeriod][0].toDate().getHours(),
+        BELL_SCHEDULE[lastStartedPeriod][0].toDate().getMinutes()
     );
+
+    return Timestamp.fromDate(resultDate);
 }
 
 function closestStartingBell(currentTime) {
-    const compareTime = new Date(0, 0, 0, currentTime.getHours(), currentTime.getMinutes());
+    const timestamp = currentTime.toDate();
+    const compareTime = Timestamp.fromDate(new Date(0, 0, 0, timestamp.getHours(), timestamp.getMinutes()));
 
     let lastStartedPeriod = 0;
-
     for (let i = 0; i < BELL_SCHEDULE.length; i++) {
-        if (compareTime <= BELL_SCHEDULE[i][0]) {
+        if (compareTime.toMillis() <= BELL_SCHEDULE[i][0].toMillis()) {
             lastStartedPeriod = i;
-            break
+            break;
         }
     }
-
     return lastStartedPeriod - 1;
 }
 
