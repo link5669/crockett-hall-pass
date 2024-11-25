@@ -130,8 +130,9 @@ async function checkConflicts(db, req, res) {
   if (responses.length == 0) {
     return true
   }
-  const sevenMinutesAgo = Timestamp.fromMillis(parseInt(req.query.now) - (SECONDS_IN_FIVE_MINUTES * 1000) - (SECONDS_IN_TWO_MINUTES * 1000));
-  let q = query(
+  let currDate = new Date()
+  currDate.setMinutes(currDate.getMinutes() - 7)
+  const sevenMinutesAgo = Timestamp.fromDate(currDate)  let q = query(
     collection(db, "passes"),
     where("timeOut", ">", sevenMinutesAgo),
     where("email", "in", responses)
