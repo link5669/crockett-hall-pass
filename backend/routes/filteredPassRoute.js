@@ -16,12 +16,6 @@ export default function filteredPassRoute(firebaseApp) {
                 where("timeOut", ">", currentTime),
                 where("destination", "==", req.query.destination)
             );
-
-            console.log("req.query.now:", req.query.now);
-            console.log("Adjusted time in milliseconds:", parseInt(req.query.now) - SECONDS_IN_FIVE_MINUTES - SECONDS_IN_TWO_MINUTES);
-            console.log("currentTime:", currentTime);
-            console.log("destination:", req.query.destination);
-
             const querySnapshot = await getDocs(q);
             let responses = []
             querySnapshot.forEach((doc) => {

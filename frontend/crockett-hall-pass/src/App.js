@@ -24,18 +24,18 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {view == "register" ? (
+        {view === "register" ? (
           <>
-            {user == null ? (
+            {user === null ? (
               <>
                 <GoogleLogin
                   onSuccess={credentialResponse => {
                     const userObject = jwtDecode(credentialResponse.credential);
                     const email = userObject.email;
                     const name = userObject.name;
-                    const firstName = userObject.given_name;
-                    const lastName = userObject.family_name;
-                    const picture = userObject.picture;
+                    // const firstName = userObject.given_name;
+                    // const lastName = userObject.family_name;
+                    // const picture = userObject.picture;
                     setUser([name, email])
                   }}
                   onError={() => {
@@ -140,7 +140,7 @@ function App() {
                 </form>
               </>
             )}</>
-        ) : requestResponse == "Request processed" ? (<>
+        ) : requestResponse === "Request processed" ? (<>
           <HallPass studentName={user[0]} studentEmail={user[1]} location={selectedLocation} />
         </>) : (<p>{requestResponse}</p>)}
       </header>

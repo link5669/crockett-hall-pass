@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import "./StudentView.css"
 import { Link } from 'react-router-dom';
 import { getBackendURL } from '../utilities';
@@ -77,7 +77,7 @@ export default function StudentView() {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter student name"
+                        placeholder="Enter student email"
                         className="border p-2 mr-2"
                     />
                     <button

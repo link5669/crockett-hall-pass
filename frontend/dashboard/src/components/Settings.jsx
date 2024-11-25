@@ -75,13 +75,13 @@ export default function Settings() {
                     type="text"
                     value={newCol1}
                     onChange={(e) => setNewCol1(e.target.value)}
-                    placeholder="Enter Column 1"
+                    placeholder="Enter Student A"
                 />
                 <input
                     type="text"
                     value={newCol2}
                     onChange={(e) => setNewCol2(e.target.value)}
-                    placeholder="Enter Column 2"
+                    placeholder="Enter Student B"
                 />
                 <button type="submit">Add Row</button>
             </form>
