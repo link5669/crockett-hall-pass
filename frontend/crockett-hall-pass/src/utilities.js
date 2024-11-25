@@ -1,4 +1,4 @@
-const inDev = true
+const inDev = false
 function getBackendURL() {
     if (inDev) {
         return "http://localhost:5001"
