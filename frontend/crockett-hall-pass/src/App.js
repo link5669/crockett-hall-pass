@@ -1,7 +1,7 @@
 import './App.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HallPass from './components/HallPass';
 import axios from "axios"
 import { closestStartingBell, getBackendURL } from './utilities';
@@ -12,9 +12,14 @@ function App() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [view, setView] = useState("register")
   const [requestResponse, setRequestResponse] = useState("")
+  const [pd, setPd] = useState("0")
   const handleChange = (event) => {
     setSelectedLocation(event.target.value);
   };
+
+  useEffect(() => {
+    setPd(closestStartingBell(Timestamp.now()))
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -59,19 +64,26 @@ function App() {
                     fontSize: '20px',
                     color: '#1a1f36'
                   }}>Welcome</h2>
-
-                  <GoogleLogin
-                    onSuccess={credentialResponse => {
-                      const userObject = jwtDecode(credentialResponse.credential);
-                      const email = userObject.email;
-                      const name = userObject.name;
-                      setUser([name, email])
-                    }}
-                    onError={() => {
-                      console.log('Login Failed');
-                    }}
-                    scope="email profile"
-                  />
+                  {user == null ? (
+                    <GoogleLogin
+                      onSuccess={credentialResponse => {
+                        const userObject = jwtDecode(credentialResponse.credential);
+                        const email = userObject.email;
+                        const name = userObject.name;
+                        setUser([name, email])
+                      }}
+                      onError={() => {
+                        console.log('Login Failed');
+                      }}
+                      scope="email profile"
+                    />
+                  ) : (
+                    <p style={{
+                      fontSize: '16px',
+                      color: '#4a5568',
+                      margin: '0 0 8px 0'
+                    }}>{user[0]}</p>
+                  )}
                 </div>
 
                 {/* Schedule Info */}
@@ -91,7 +103,7 @@ function App() {
                     color: '#4a5568',
                     margin: '0 0 8px 0'
                   }}>
-                    {closestStartingBell(Timestamp.now())}th Period
+                    {pd}{pd == 1 ? <>st</> : pd == 2 ? <>nd</> : pd == 3 ? <>rd</> : <>th</>} Period
                   </p>
                   <p style={{
                     fontSize: '14px',
@@ -114,7 +126,7 @@ function App() {
                     fontSize: '20px',
                     color: '#1a1f36'
                   }}>Quick Actions</h2>
-                  {user == null ? (<p style={{color: 'black', fontSize: '14px'}}>Log in to see actions</p>) : (
+                  {user == null ? (<p style={{ color: 'black', fontSize: '14px' }}>Log in to see actions</p>) : (
                     <button style={{
                       backgroundColor: '#4285f4',
                       color: 'white',
@@ -179,7 +191,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 1</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 1</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>8:35 AM - 9:15 AM</p>
                     </div>
                     <div style={{
@@ -187,7 +199,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 2</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 2</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>9:18 AM - 9:58 AM</p>
                     </div>
                     <div style={{
@@ -195,7 +207,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 3</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 3</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>10:01 AM - 10:41 AM</p>
                     </div>
                     <div style={{
@@ -203,7 +215,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 4</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 4</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>10:44 AM - 11:24 AM</p>
                     </div>
                     <div style={{
@@ -211,7 +223,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 5</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 5</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>11:27 AM - 12:07 PM</p>
                     </div>
                     <div style={{
@@ -219,7 +231,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 6</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 6</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>12:10 PM - 12:50 PM</p>
                     </div>
                     <div style={{
@@ -227,7 +239,7 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 7</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 7</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>12:53 PM - 1:33 PM</p>
                     </div>
                     <div style={{
@@ -235,18 +247,18 @@ function App() {
                       backgroundColor: '#f8fafc',
                       borderRadius: '6px'
                     }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 8</p>
+                      <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 8</p>
                       <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>1:36 PM - 2:16 PM</p>
                     </div>
                   </div>
                   <div style={{
-                      padding: '12px',
-                      backgroundColor: '#f8fafc',
-                      borderRadius: '6px'
-                    }}>
-                      <p style={{ margin: '0', color: '#4a5568', fontSize:'20px' }}>Period 9</p>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>1:39 PM - 3:00 PM</p>
-                    </div>
+                    padding: '12px',
+                    backgroundColor: '#f8fafc',
+                    borderRadius: '6px'
+                  }}>
+                    <p style={{ margin: '0', color: '#4a5568', fontSize: '20px' }}>Period 9</p>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#718096' }}>1:39 PM - 3:00 PM</p>
+                  </div>
                 </div>
 
                 {/* Notifications */}

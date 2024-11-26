@@ -39,7 +39,7 @@ function closestStartingBell(currentTime) {
             break;
         }
     }
-    return lastStartedPeriod - 1;
+    return lastStartedPeriod;
 }
 
 export { getBackendURL, closestStartingBell }

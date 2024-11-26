@@ -75,7 +75,7 @@ function closestStartingBell(currentTime) {
             break;
         }
     }
-    return lastStartedPeriod - 1;
+    return lastStartedPeriod;
 }
 
 export { BELL_SCHEDULE, closestStartingBell, IN_DEV, closestStartingBellTime }

@@ -88,6 +88,7 @@ async function checkPeriodLimit(db, req, res) {
   const querySnapshot = await getDocs(q);
 
   let passesThisPd = querySnapshot.size
+  console.log(passesThisPd)
 
   let q1 = query(
     collection(db, "limits"),
