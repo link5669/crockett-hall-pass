@@ -17,27 +17,19 @@ const BELL_SCHEDULE = [
 
 function closestStartingBellTime(currentTime) {
     const currentTimeDate = currentTime.toDate()
-    const today = Timestamp.now().toDate();
-
+    console.log("a",currentTimeDate)
     let lastStartedPeriod = -1;
-    const compareTimeDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        currentTimeDate.getHours(),
-        currentTimeDate.getMinutes()
-    );
 
     for (let i = 0; i < BELL_SCHEDULE.length; i++) {
         const compareDate = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
+            currentTimeDate.getFullYear(),
+            currentTimeDate.getMonth(),
+            currentTimeDate.getDate(),
             BELL_SCHEDULE[i][0].toDate().getHours(),
             BELL_SCHEDULE[i][0].toDate().getMinutes()
         );
-
-        if (compareTimeDate.getTime() >= compareDate.getTime()) {
+        console.log("b",compareDate)
+        if (currentTimeDate.getTime() >= compareDate.getTime()) {
             lastStartedPeriod = i;
         } else {
             break;
@@ -45,15 +37,15 @@ function closestStartingBellTime(currentTime) {
     }
 
     if (lastStartedPeriod === -1) return null;
-
+    console.log("c",lastStartedPeriod)
     const resultDate = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
+        currentTimeDate.getFullYear(),
+        currentTimeDate.getMonth(),
+        currentTimeDate.getDate(),
         BELL_SCHEDULE[lastStartedPeriod][0].toDate().getHours(),
         BELL_SCHEDULE[lastStartedPeriod][0].toDate().getMinutes()
     );
-
+    console.log("d", resultDate)
     return Timestamp.fromDate(resultDate);
 }
 
