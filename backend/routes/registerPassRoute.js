@@ -73,8 +73,6 @@ async function checkDailyLimit(db, req, res) {
 
 async function checkPeriodLimit(db, req, res) {
   let ret = true
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
   
   let closestBellTime = closestStartingBellTime(Timestamp.now())
 
@@ -84,11 +82,10 @@ async function checkPeriodLimit(db, req, res) {
     where("timeOut", ">", closestBellTime),
     orderBy("timeOut", "desc")
   )
-
+  console.log("bell:",closestBellTime)
   const querySnapshot = await getDocs(q);
 
   let passesThisPd = querySnapshot.size
-  console.log(passesThisPd)
 
   let q1 = query(
     collection(db, "limits"),
@@ -101,6 +98,8 @@ async function checkPeriodLimit(db, req, res) {
   limitsSnapshot.forEach((doc) => {
     pdLimit = doc.data().pd
   })
+  
+  console.log("limit:", pdLimit, "count:", passesThisPd)
 
   if (passesThisPd >= pdLimit) {
     res.status(200).json({ message: "You've requested too many passes this period" })
