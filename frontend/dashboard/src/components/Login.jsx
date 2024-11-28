@@ -1,5 +1,7 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import axios from "axios"
+import { getBackendURL } from '../utilities';
 
 export default function Login({ setLoggedIn, email }) {
     return (
@@ -11,8 +13,8 @@ export default function Login({ setLoggedIn, email }) {
                 if (regex.test(email)) {
                     setLoggedIn(true)
                     localStorage.setItem('loggedIn','true')
-                    //only for local use, do not change to ISO
                     localStorage.setItem('loginDate',Date.now())
+                    axios.post(`${getBackendURL()}/api/addStaff?staffEmail=${email}`)
                 }
             }}
             onError={() => {

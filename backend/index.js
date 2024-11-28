@@ -9,6 +9,9 @@ import searchConflicts from "./routes/searchConflicts.js";
 import setCustomLimitRoute from "./routes/setCustomLimitRoute.js";
 import searchLimits from "./routes/getLimitsRoute.js";
 import "dotenv/config.js";
+import requestPassRoute from "./routes/requestPassRoute.js";
+import addStaffRoute from "./routes/addStaffRoute.js";
+import getStaffRoute from "./routes/getStaffRoute.js";
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -41,6 +44,8 @@ app.use("/api/registerConflict", registerConflictRoute(firebaseApp));
 app.use("/api/searchConflicts", searchConflicts(firebaseApp));
 app.use("/api/setLimits", setCustomLimitRoute(firebaseApp));
 app.use("/api/searchLimits", searchLimits(firebaseApp));
-
+app.use("/api/requestPass", requestPassRoute(firebaseApp));
+app.use("/api/addStaff", addStaffRoute(firebaseApp));
+app.use("/api/getStaff", getStaffRoute(firebaseApp));
 
 app.listen(port, () => console.log(`Server listening on port ${port}`));

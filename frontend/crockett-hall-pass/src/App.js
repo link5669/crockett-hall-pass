@@ -1,7 +1,7 @@
 import './App.css';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import HallPass from './components/HallPass';
 import axios from "axios"
 import { closestStartingBell, getBackendURL } from './utilities';
@@ -13,17 +13,35 @@ function App() {
   const [view, setView] = useState("register")
   const [requestResponse, setRequestResponse] = useState("")
   const [pd, setPd] = useState("0")
+  const [staffEmail, setStaffEmail] = useState("")
+  const [staffDir, setStaffDir] = useState([])
+  const [suggestions, setSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleChange = (event) => {
     setSelectedLocation(event.target.value);
   };
 
   useEffect(() => {
+    axios.get(`${getBackendURL()}/api/getStaff`).then(e => setSuggestions(e.data))
     setPd(closestStartingBell(Timestamp.now()))
   })
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post(`${getBackendURL()}/api/registerPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}`).then((r) => {
+    axios.post(`${getBackendURL()}/api/requestPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&staffEmail=${staffEmail}`).then((r) => {
       if (r.status != 200) {
         handleSubmit(e)
       }
@@ -284,6 +302,34 @@ function App() {
         ) : view == "passRequest" ? (
           <>
             <h2>Welcome, {user[0]}</h2>
+            <div className="staff-input-container" ref={containerRef}>
+              <p>Which staff member should be notified?</p>
+              <div className="input-with-suggestions">
+                <input
+                  type='text'
+                  value={staffEmail}
+                  onChange={e => setStaffEmail(e.target.value)}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="Start typing a name or email..."
+                />
+                {staffEmail && showSuggestions && suggestions.length > 0 && (
+                  <div className="suggestions-menu">
+                    {suggestions.slice(0, 4).map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="suggestion-item"
+                        onClick={() => {
+                          setStaffEmail(suggestion);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             <p>Select a reason:</p>
             <form onSubmit={handleSubmit}>
               <div className="radio-group">

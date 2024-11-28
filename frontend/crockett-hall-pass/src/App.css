@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -98,4 +99,55 @@ label {
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+input[type="text"] {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid rgb(74, 85, 104, 0.3);
+  border-radius: 4px;
+  color: rgb(74, 85, 104);
+  background-color: white;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+  margin: 10px 0;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.staff-input-container {
+  position: relative;
+}
+
+.input-with-suggestions {
+  position: relative;
+}
+
+.suggestions-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid rgb(74, 85, 104, 0.3);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 150Spx;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.suggestion-item {
+  padding: 5px 10px;
+  cursor: pointer;
+  color: rgb(74, 85, 104);
+  transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: rgb(245, 247, 251);
 }
