@@ -34,6 +34,7 @@ export default function getPassByStudent(firebaseApp) {
             const querySnapshot = await getDocs(q);
             let responses = []
             querySnapshot.forEach((doc) => {
+                console.log(doc.id)
                 responses.push(doc.data())
             });
             res.status(200).json({ responses });

@@ -12,7 +12,7 @@ export default function getRequestsRoute(firebaseApp) {
             const querySnapshot = await getDocs(q);
             let responses = []
             querySnapshot.forEach((doc) => {
-                responses.push(doc.data())
+                responses.push({ id: doc.id, ...doc.data() })
             });
             res.status(200).json({ id: querySnapshot.id, responses: responses });
         } catch (error) {

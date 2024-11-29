@@ -1,5 +1,5 @@
 import express from "express";
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, deleteDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 
 export default function registerPassRoute(firebaseApp) {
@@ -15,6 +15,9 @@ export default function registerPassRoute(firebaseApp) {
         destination: req.query.destination,
         timeOut: Timestamp.now(),
       });
+      console.log(req.query.requestID)
+      const requestRef = doc(db, 'requests', req.query.requestID);
+      deleteDoc(requestRef);
       res.status(200).json({
         message: "Request processed"
       });

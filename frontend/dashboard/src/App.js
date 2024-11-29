@@ -19,19 +19,26 @@ function App() {
         setLoggedIn(true)
       }
     }
-    console.log(currentRequests)
-    if (currentRequests.length == 0)
-      axios.get(`${getBackendURL()}/api/getRequests`).then(e => {
-        setCurrentRequests(e.data.responses)
-      })
+  })
+
+  useEffect(() => {
+    const pollInterval = setInterval(async () => {
+      if (currentRequests.length == 0)
+        axios.get(`${getBackendURL()}/api/getRequests`).then(e => {
+      console.log(e.data)
+          setCurrentRequests(e.data.responses)
+        })
+    }, 3000);
+
+    return () => clearInterval(pollInterval);
   })
 
   const handleApproval = async (pass, newApprovalStatus) => {
     console.log(pass)
     try {
-      axios.post(`${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}`)
-      
-      //delete
+      await axios.post(`${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}&requestID=${pass.id}`)
+      console.log(currentRequests[0].id, pass.id)
+      setCurrentRequests(currentRequests.filter(a => a.id != pass.id))
     } catch (error) {
       console.error('Error updating approval status:', error);
     }
