@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StudentView from './components/StudentView';
 import Settings from './components/Settings';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import CurrentPasses from './components/CurrentPasses';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,6 +14,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/passes" element={<CurrentPasses />} />
         <Route path="/lookup" element={<StudentView />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>

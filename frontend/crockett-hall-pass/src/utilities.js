@@ -33,7 +33,6 @@ function closestStartingBell(currentTime) {
             BELL_SCHEDULE[i][0].toDate().getHours(),
             BELL_SCHEDULE[i][0].toDate().getMinutes()
         );
-        console.log(compareDate, compareTime)
         if (compareTime <= compareDate) {
             lastStartedPeriod = i;
             break;

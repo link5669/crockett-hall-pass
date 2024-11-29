@@ -6,6 +6,7 @@ import HallPass from './components/HallPass';
 import axios from "axios"
 import { closestStartingBell, getBackendURL } from './utilities';
 import { Timestamp } from 'firebase/firestore';
+import { findSimilar } from "find-similar"
 
 function App() {
   const [user, setUser] = useState(null)
@@ -18,6 +19,10 @@ function App() {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    setSuggestions(findSimilar(staffEmail, staffDir))
+  }, [staffEmail])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -35,20 +40,51 @@ function App() {
   };
 
   useEffect(() => {
-    axios.get(`${getBackendURL()}/api/getStaff`).then(e => setSuggestions(e.data))
+    if (suggestions.length == 0) {
+      axios.get(`${getBackendURL()}/api/getStaff`).then(e => setSuggestions(e.data.responses.map(a => a.email)))
+    }
     setPd(closestStartingBell(Timestamp.now()))
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    axios.post(`${getBackendURL()}/api/requestPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&staffEmail=${staffEmail}`).then((r) => {
-      if (r.status != 200) {
-        handleSubmit(e)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${getBackendURL()}/api/requestPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&staffEmail=${staffEmail}`);
+      console.log("a")
+      if (response.status === 200) {
+        console.log("b")
+        setRequestResponse(response.data.message);
+        if (response.data.message != "Request processed") {
+          setView("error")
+          return
+        }
+        setView("awaiting response");
+
+        const pollInterval = setInterval(async () => {
+          try {
+            const statusResponse = await axios.get(
+              `${getBackendURL()}/api/passes/student-request/${user[1]}`
+            );
+            console.log("asd",statusResponse.data)
+            if (statusResponse.data.responses.length > 0) {
+              clearInterval(pollInterval);
+              setView("response received");
+            }
+          } catch (error) {
+            console.error('Error checking status:', error);
+            clearInterval(pollInterval);
+            setRequestResponse('Error checking request status');
+          }
+        }, 2000);
+
+        return () => clearInterval(pollInterval);
       }
-      setRequestResponse(r.data.message)
-    })
-    setView("pass")
-  }
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      setRequestResponse('Error submitting request');
+    }
+  };
 
   return (
     <div className="App">
@@ -64,13 +100,11 @@ function App() {
               backgroundColor: '#f5f7fb',
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}>
-              {/* Left Sidebar */}
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '24px'
               }}>
-                {/* Profile Section */}
                 <div style={{
                   backgroundColor: 'white',
                   padding: '24px',
@@ -104,7 +138,6 @@ function App() {
                   )}
                 </div>
 
-                {/* Schedule Info */}
                 <div style={{
                   backgroundColor: 'white',
                   padding: '24px',
@@ -162,13 +195,11 @@ function App() {
                 </div>
               </div>
 
-              {/* Main Content Area */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: '24px'
               }}>
-                {/* Recent Passes */}
                 <div style={{
                   backgroundColor: 'white',
                   padding: '24px',
@@ -187,7 +218,6 @@ function App() {
                   }}>No recent passes to display</p>
                 </div>
 
-                {/* Upcoming Classes */}
                 <div style={{
                   backgroundColor: 'white',
                   padding: '24px',
@@ -279,7 +309,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Notifications */}
                 <div style={{
                   backgroundColor: 'white',
                   padding: '24px',
@@ -422,7 +451,7 @@ function App() {
               </button>
             </form>
           </>
-        ) : requestResponse === "Request processed" ? (<>
+        ) : view === "awaiting response" ? (<p>Awaiting response...</p>) : requestResponse === "Request processed" ? (<>
           <HallPass studentName={user[0]} studentEmail={user[1]} location={selectedLocation} />
         </>) : (<p>{requestResponse}</p>)}
       </header>

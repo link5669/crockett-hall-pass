@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getBackendURL } from '../utilities';
 import axios from "axios"
 import "../App.css"
+import Navbar from './Navbar';
 
 export default function StudentView() {
     const [name, setName] = useState('');
@@ -50,27 +51,7 @@ export default function StudentView() {
 
     return (
         <>
-            <nav class="navbar">
-                <div class="logo">Crockett Pass Dashboard</div>
-                <div className="flex items-center gap-4">
-                    <Link to='/'>
-                        <button className="px-4 py-2 ">
-                            Current Passes
-                        </button>
-                    </Link>
-                    <Link to='/lookup'>
-                        <button className="px-4 py-2 ">
-                            Student Lookup
-                        </button>
-                    </Link>
-                    <Link to='/settings'>
-                        <button className="px-4 py-2 ">
-                            Settings
-                        </button>
-                    </Link>
-                </div>
-            </nav>
-
+            <Navbar/>
             <div className="p-4">
                 <div className="mb-4">
                     <input

@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import HallPass from './components/HallPass';
 import "./App.css"
-import { Link } from 'react-router-dom';
 import { getBackendURL } from './utilities';
 import Login from './components/Login';
+import Navbar from './components/Navbar';
 
 function App() {
-  const [passes, setPasses] = useState([]);
-  const [filteredDestination, setFilteredDestination] = useState("All")
   const [loggedIn, setLoggedIn] = useState(false)
+  const [currentRequests, setCurrentRequests] = useState([])
 
   useEffect(() => {
     if (localStorage.getItem('loggedIn') == 'true') {
-      const ONE_HOUR = 3600000; 
+      const ONE_HOUR = 3600000;
       const loginDate = parseInt(localStorage.getItem('loginDate'));
       //only for local use, do not change to ISO
       const timeSinceLogin = Date.now() - loginDate;
@@ -21,84 +19,61 @@ function App() {
         setLoggedIn(true)
       }
     }
+    console.log(currentRequests)
+    if (currentRequests.length == 0)
+      axios.get(`${getBackendURL()}/api/getRequests`).then(e => {
+        setCurrentRequests(e.data.responses)
+      })
   })
 
-  useEffect(() => {
-    const fetchPasses = async () => {
-      try {
-        let response = ""
-        if (filteredDestination === "All") {
-          response = await axios.get(`${getBackendURL()}/api/getPasses`);
-        } else {
-          response = await axios.get(`${getBackendURL()}/api/filterPasses?destination=${filteredDestination}`);
-        }
-        setPasses(response.data.responses);
-      } catch (error) {
-        console.error('Error fetching passes:', error);
-      }
-    };
-
-    fetchPasses();
-
-    const interval = setInterval(fetchPasses, 30000);
-    return () => clearInterval(interval);
-  }, [filteredDestination]);
+  const handleApproval = async (pass, newApprovalStatus) => {
+    console.log(pass)
+    try {
+      axios.post(`${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}`)
+      
+      //delete
+    } catch (error) {
+      console.error('Error updating approval status:', error);
+    }
+  };
 
   return (
     <>
       {loggedIn ? (<>
-        <nav class="navbar">
-          <div class="logo">Crockett Pass Dashboard</div>
-          <div className="flex items-center gap-4">
-            <Link to='/'>
-              <button className="px-4 py-2 ">
-                Current Passes
-              </button>
-            </Link>
-            <Link to='/lookup'>
-              <button className="px-4 py-2 ">
-                Student Lookup
-              </button>
-            </Link>
-            <Link to='/settings'>
-              <button className="px-4 py-2 ">
-                Settings
-              </button>
-            </Link>
-          </div>
-        </nav>
-        <div class="dropdownA">
-          <button class="dropbtn">{filteredDestination} ▼</button>
-          <div class="dropdown-contentA">
-            <p onClick={() => setFilteredDestination("All")}>All</p>
-            <p onClick={() => setFilteredDestination("Lavatory")}>Lavatory</p>
-            <p onClick={() => setFilteredDestination("Main Office")}>Main Office</p>
-            <p onClick={() => setFilteredDestination("A-House Office")}>A-House Office</p>
-            <p onClick={() => setFilteredDestination("B-House Office")}>B-House Office</p>
-            <p onClick={() => setFilteredDestination("Media Center")}>Media Center</p>
-            <p onClick={() => setFilteredDestination("Nurse")}>Nurse</p>
-            <p onClick={() => setFilteredDestination("Water")}>Water</p>
-          </div>
-        </div>
-        <div className="dashboard">
-          {passes.map((pass, index) => (
-            <div
-              key={`${pass.id}-${pass.timeOut.seconds}`}
-              className="pass-container"
-              style={{
-                marginTop: `${(index % 2) * 20}px`
-              }}
-            >
-              <HallPass
-                studentName={pass.studentName}
-                studentEmail={pass.email}
-                location={pass.destination}
-                timeOut={pass.timeOut.seconds * 1000}
-                timeIn={(pass.timeOut.seconds * 1000) + (5 * 60 *1000)}
-              />
-            </div>
-          ))}
-        </div>
+        <Navbar />
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Requested</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approve?</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {currentRequests.map((pass, i) => (
+              <tr key={i}>
+                <td className="px-6 py-4 whitespace-nowrap">{pass.studentName}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{pass.destination}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(pass.timeOut.seconds * 1000).toLocaleTimeString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => handleApproval(pass, true)}
+                    className={`p-2 rounded text-green-600 hover:text-green-800`}
+                  >
+                    {'✓'}
+                  </button>
+                  <button
+                    onClick={() => handleApproval(pass, false)}
+                    className={`p-2 rounded text-red-600 hover:text-red-800`}
+                  >
+                    {'✗'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </>
       ) : (
         <Login setLoggedIn={setLoggedIn} />
