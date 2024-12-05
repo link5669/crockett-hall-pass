@@ -19,9 +19,15 @@ function App() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setSuggestions(findSimilar(staffEmail, staffDir));
+    console.log(
+      staffDir,
+      staffEmail,
+      findSimilar(staffEmail, staffDir, { maxScore: 1, criteria: 0.1 }),
+    );
   }, [staffEmail]);
 
   useEffect(() => {
@@ -43,7 +49,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (suggestions.length == 0) {
+    if (staffDir.length == 0) {
       axios
         .get(`${getBackendURL()}/api/getStaff`)
         .then((e) => setStaffDir(e.data.responses.map((a) => a.email)));
@@ -53,6 +59,14 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (selectedLocation == "") {
+      setError("Please select a destination!");
+      return;
+    }
+    if (staffEmail == "") {
+      setError("Please select a staff member!");
+      return;
+    }
     try {
       const response = await axios.post(
         `${getBackendURL()}/api/requestPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&staffEmail=${staffEmail}`,
@@ -589,25 +603,27 @@ function App() {
                   onFocus={() => setShowSuggestions(true)}
                   placeholder="Start typing a name or email..."
                 />
-                {staffEmail && showSuggestions && suggestions.length > 0 && (
-                  <div className="suggestions-menu">
-                    {suggestions.slice(0, 4).map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="suggestion-item"
-                        onClick={() => {
-                          setStaffEmail(suggestion);
-                          setShowSuggestions(false);
-                        }}
-                      >
-                        {suggestion}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {staffEmail != "" &&
+                  showSuggestions &&
+                  suggestions.length > 0 && (
+                    <div className="suggestions-menu">
+                      {suggestions.slice(0, 4).map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="suggestion-item"
+                          onClick={() => {
+                            setStaffEmail(suggestion);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </div>
             </div>
-            <p>Select a reason:</p>
+            <p>Select a destination:</p>
             <form onSubmit={handleSubmit}>
               <div className="radio-group">
                 <div className="radio-option">
@@ -697,6 +713,8 @@ function App() {
               <button type="submit" className="submit-button">
                 Submit
               </button>
+              <br />
+              {<p style={{ color: "red" }}>{error}</p>}
             </form>
           </>
         ) : view === "awaiting response" ? (
