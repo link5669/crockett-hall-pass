@@ -4,6 +4,7 @@ import axios from "axios";
 import { getBackendURL } from "../utilities";
 import HallPass from "./HallPass";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 export default function CurrentPasses() {
   const [passes, setPasses] = useState([]);
   const [filteredDestination, setFilteredDestination] = useState("All");
@@ -75,12 +76,24 @@ export default function CurrentPasses() {
               style={{ textAlign: "center" }}
               onMouseOver={(e) => (e.target.style.color = "blue")}
               onMouseOut={(e) => (e.target.style.color = "black")}
-              onClick={() => setPasses(passes.filter((a) => a.id !== pass.id))}
+              onClick={() =>
+                setPasses(passes.filter((a) => a.timeOut !== pass.timeOut))
+              }
             >
-              dismiss
+              Dismiss
             </p>
           </div>
         ))}
+        <br />
+        <br />
+        <p style={{ color: "gray" }}>
+          Data should refresh every three seconds, please reload the page if you
+          encounter any issues. Please contact{" "}
+          <a target="_blank" href="mailto:macquaviva@htsdnj.org">
+            Miles
+          </a>{" "}
+          if you encounter any bugs.
+        </p>
       </div>
     </>
   );

@@ -100,6 +100,16 @@ function App() {
               ))}
             </tbody>
           </table>
+          <br />
+          <br />
+          <p style={{ color: "gray" }}>
+            Data should refresh every three seconds, please reload the page if
+            you encounter any issues. Please contact{" "}
+            <a target="_blank" href="mailto:macquaviva@htsdnj.org">
+              Miles
+            </a>{" "}
+            if you encounter any bugs.
+          </p>
         </>
       ) : (
         <Login setLoggedIn={setLoggedIn} />
