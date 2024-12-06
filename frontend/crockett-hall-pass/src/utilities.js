@@ -49,4 +49,47 @@ function closestStartingBell(currentTime) {
   return lastStartedPeriod;
 }
 
-export { getBackendURL, closestStartingBell };
+function findSimilarStrings(input, arrayOfStrings) {
+  // Function to calculate Levenshtein distance between two strings
+  function levenshteinDistance(str1, str2) {
+    const matrix = Array(str2.length + 1)
+      .fill()
+      .map(() => Array(str1.length + 1).fill(0));
+
+    for (let i = 0; i <= str1.length; i++) {
+      matrix[0][i] = i;
+    }
+    for (let j = 0; j <= str2.length; j++) {
+      matrix[j][0] = j;
+    }
+
+    for (let j = 1; j <= str2.length; j++) {
+      for (let i = 1; i <= str1.length; i++) {
+        if (str1[i - 1] === str2[j - 1]) {
+          matrix[j][i] = matrix[j - 1][i - 1];
+        } else {
+          matrix[j][i] = Math.min(
+            matrix[j - 1][i - 1] + 1, // substitution
+            matrix[j][i - 1] + 1, // insertion
+            matrix[j - 1][i] + 1, // deletion
+          );
+        }
+      }
+    }
+    return matrix[str2.length][str1.length];
+  }
+
+  // Calculate distances and store with original strings
+  const distances = arrayOfStrings.map((str) => ({
+    string: str,
+    distance: levenshteinDistance(input.toLowerCase(), str.toLowerCase()),
+  }));
+
+  // Sort by distance and return top 4 strings
+  return distances
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 4)
+    .map((item) => item.string);
+}
+
+export { getBackendURL, closestStartingBell, findSimilarStrings };

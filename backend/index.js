@@ -1,6 +1,6 @@
 import express from "express";
 import { initializeApp } from "firebase/app";
-import registerPassRoute from "./routes/registerPassRoute.js"
+import registerPassRoute from "./routes/registerPassRoute.js";
 import getPassRoute from "./routes/getPassRoute.js";
 import filteredPassRoute from "./routes/filteredPassRoute.js";
 import getPassByStudent from "./routes/getPassByStudent.js";
@@ -21,8 +21,8 @@ const firebaseConfig = {
   storageBucket: process.env.STORAGE_BUCKET,
   messagingSenderId: process.env.MESSAGING_SENDER_ID,
   appId: process.env.APP_ID,
-  measurementId: process.env.MEASUREMENT_ID
-}
+  measurementId: process.env.MEASUREMENT_ID,
+};
 
 const port = 5001;
 const app = express();
@@ -50,6 +50,4 @@ app.use("/api/getRequests", getRequestsRoute(firebaseApp));
 app.use("/api/addStaff", addStaffRoute(firebaseApp));
 app.use("/api/getStaff", getStaffRoute(firebaseApp));
 
-app.listen(port, () => console.log(`Server listening on port ${port}`));        console.log(
-  "akjsd"
-)
+app.listen(port, () => console.log(`Server listening on port ${port}`));

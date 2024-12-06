@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentRequests, setCurrentRequests] = useState([]);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (localStorage.getItem("loggedIn") == "true") {
@@ -24,22 +25,20 @@ function App() {
   useEffect(() => {
     const pollInterval = setInterval(async () => {
       if (currentRequests.length == 0)
-        axios.get(`${getBackendURL()}/api/getRequests`).then((e) => {
-          console.log(e.data);
-          setCurrentRequests(e.data.responses);
-        });
+        axios
+          .get(`${getBackendURL()}/api/getRequests?email=${email}`)
+          .then((e) => {
+            setCurrentRequests(e.data.responses);
+          });
     }, 3000);
-
     return () => clearInterval(pollInterval);
   });
 
   const handleApproval = async (pass, newApprovalStatus) => {
-    console.log(pass);
     try {
       await axios.post(
         `${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}&requestID=${pass.id}`,
       );
-      console.log(currentRequests[0].id, pass.id);
       setCurrentRequests(currentRequests.filter((a) => a.id != pass.id));
     } catch (error) {
       console.error("Error updating approval status:", error);
@@ -112,7 +111,7 @@ function App() {
           </p>
         </>
       ) : (
-        <Login setLoggedIn={setLoggedIn} />
+        <Login setLoggedIn={setLoggedIn} setEmail={setEmail} />
       )}
     </>
   );

@@ -4,7 +4,11 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState, useRef } from "react";
 import HallPass from "./components/HallPass";
 import axios from "axios";
-import { closestStartingBell, getBackendURL } from "./utilities";
+import {
+  closestStartingBell,
+  findSimilarStrings,
+  getBackendURL,
+} from "./utilities";
 import { Timestamp } from "firebase/firestore";
 import { findSimilar } from "find-similar";
 
@@ -22,11 +26,11 @@ function App() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setSuggestions(findSimilar(staffEmail, staffDir));
+    setSuggestions(findSimilarStrings(staffEmail, staffDir));
     console.log(
       staffDir,
       staffEmail,
-      findSimilar(staffEmail, staffDir, { maxScore: 1, criteria: 0.1 }),
+      findSimilarStrings(staffEmail, staffDir, { maxScore: 1, criteria: 0.1 }),
     );
   }, [staffEmail]);
 
