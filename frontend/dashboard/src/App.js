@@ -47,9 +47,9 @@ function App() {
 
   return (
     <>
+      <Navbar signedIn={loggedIn} />
       {loggedIn ? (
         <>
-          <Navbar />
           <h2 style={{ padding: "20px" }}>Pending Passes:</h2>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -111,7 +111,11 @@ function App() {
           </p>
         </>
       ) : (
-        <Login setLoggedIn={setLoggedIn} setEmail={setEmail} />
+        <>
+          <br />
+          <h2>Please sign in to continue</h2>
+          <Login setLoggedIn={setLoggedIn} setEmail={setEmail} />
+        </>
       )}
     </>
   );
