@@ -11,6 +11,9 @@ export default function Navbar({ signedIn = true }) {
             <Link to="/">
               <button className="px-4 py-2 ">Approve Pending Passes</button>
             </Link>
+            <Link to="/register">
+              <button className="px-4 py-2 ">Register Pass</button>
+            </Link>
             <Link to="/passes">
               <button className="px-4 py-2 ">Active Passes</button>
             </Link>

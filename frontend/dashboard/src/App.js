@@ -20,7 +20,7 @@ function App() {
         setLoggedIn(true);
       }
     }
-  });
+  }, []);
 
   useEffect(() => {
     const pollInterval = setInterval(async () => {

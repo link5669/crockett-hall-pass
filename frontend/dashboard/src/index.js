@@ -8,6 +8,7 @@ import Settings from "./components/Settings";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import CurrentPasses from "./components/CurrentPasses";
 import Footer from "./components/Footer";
+import RegisterPass from "./components/RegisterPass";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,6 +22,7 @@ root.render(
         <Route path="/passes" element={<CurrentPasses />} />
         <Route path="/lookup" element={<StudentView />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/register" element={<RegisterPass />} />
       </Routes>
     </BrowserRouter>
     {/* <Footer /> */}
