@@ -10,7 +10,6 @@ import {
   getBackendURL,
 } from "./utilities";
 import { Timestamp } from "firebase/firestore";
-import { findSimilar } from "find-similar";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -71,6 +70,13 @@ function App() {
       setError("Please select a staff member!");
       return;
     }
+    const testRequest = await axios.get(
+      `${getBackendURL()}/api/passes/student-request/${user[1]}`,
+    );
+    if (testRequest.data.responses.length > 0) {
+      setError("Please wait a few minutes before requesting another pass!");
+      return;
+    }
     try {
       const response = await axios.post(
         `${getBackendURL()}/api/requestPass?studentName=${user[0]}&studentEmail=${user[1]}&destination=${selectedLocation}&staffEmail=${staffEmail}`,
@@ -93,7 +99,14 @@ function App() {
             console.log("asd", statusResponse.data);
             if (statusResponse.data.responses.length > 0) {
               clearInterval(pollInterval);
-              setView("response received");
+              if (
+                statusResponse.data.responses[0].destination == selectedLocation
+              )
+                if (statusResponse.data.responses[0].approved == "true") {
+                  setView("response approved");
+                } else {
+                  setView("response denied");
+                }
             }
           } catch (error) {
             console.error("Error checking status:", error);
@@ -724,13 +737,17 @@ function App() {
         ) : view === "awaiting response" ? (
           <p>Awaiting response...</p>
         ) : requestResponse === "Request processed" ? (
-          <>
-            <HallPass
-              studentName={user[0]}
-              studentEmail={user[1]}
-              location={selectedLocation}
-            />
-          </>
+          view == "response approved" ? (
+            <>
+              <HallPass
+                studentName={user[0]}
+                studentEmail={user[1]}
+                location={selectedLocation}
+              />
+            </>
+          ) : (
+            <p>Request denied</p>
+          )
         ) : (
           <p>{requestResponse}</p>
         )}

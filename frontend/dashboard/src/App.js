@@ -18,12 +18,14 @@ function App() {
       const timeSinceLogin = Date.now() - loginDate;
       if (timeSinceLogin < ONE_HOUR) {
         setLoggedIn(true);
+        setEmail(localStorage.getItem("email"));
       }
     }
   }, []);
 
   useEffect(() => {
     const pollInterval = setInterval(async () => {
+      console.log(email);
       if (currentRequests.length == 0)
         axios
           .get(`${getBackendURL()}/api/getRequests?email=${email}`)
@@ -37,7 +39,7 @@ function App() {
   const handleApproval = async (pass, newApprovalStatus) => {
     try {
       await axios.post(
-        `${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}&requestID=${pass.id}`,
+        `${getBackendURL()}/api/registerPass?studentName=${pass.studentName}&studentEmail=${pass.email}&destination=${pass.destination}&requestID=${pass.id}&approved=${newApprovalStatus}`,
       );
       setCurrentRequests(currentRequests.filter((a) => a.id != pass.id));
     } catch (error) {
